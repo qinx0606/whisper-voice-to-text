@@ -1,5 +1,5 @@
 flask==2.2.2
-whisper==1.0.0  # 确保安装合适的 whisper 版本
-matplotlib==3.7.1  # 或者使用你项目中实际用到的版本
-numpy==1.23.4  # 如果你的 matplotlib 需要 numpy
-gunicorn==20.1.0  # 如果你使用 Gunicorn 作为 WSGI 服务器
+whisper==1.0.0
+matplotlib==3.7.1
+numpy==1.23.4
+gunicorn==20.1.0
