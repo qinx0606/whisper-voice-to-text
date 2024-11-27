@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音频分析</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin-left: 100px;  /* 设置左边距，整个页面右移 */
+            margin-right: 300px; /* 设置右边距，保留右边的空白区域 */
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .pie-chart img {
+            width: 400px;
+            height: 400px;
+        }
+
+        /* 加载动画样式 */
+        .loading-spinner {
+            border: 8px solid #f3f3f3; /* 背景色 */
+            border-top: 8px solid #3498db; /* 转动的颜色 */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        /* 旋转动画 */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Voice to Text</h1>
+    <p><strong>使用方法：</strong><br/>（1）上传音频文件（支持 wav、mp3、m4a 格式）;<br/>（2）选择Whisper的语音转文字模型（turbo、large-v2、large-v3）;<br/>（3）点击“Analysis”，自动生成语音转文字的结果，以及L1和L2的发言内容及比重。</p><br/>
+
+    <!-- 音频上传和模型选择表单 -->
+    <form id="upload-form" enctype="multipart/form-data" method="POST">
+        <!-- 文件上传 -->
+        <label for="file">Audio-upload:</label>
+        <input type="file" name="file" accept=".wav,.mp3,.m4a" required><br><br>
+
+        <!-- 模型选择 -->
+        <label for="model-select">Model-select:</label>
+        <select id="model-select" name="model">
+            <option value="turbo">turbo</option>
+            <option value="large-v2">large-v2</option>
+            <option value="large-v3">large-v3</option>
+        </select><br><br>
+
+        <!-- 分析按钮 -->
+        <button type="submit">Analyze</button>
+    </form>
+
+    <!-- 显示加载动画 -->
+    <div id="loading" class="loading-spinner" style="display: none;"></div>
+
+    <!-- 显示分析结果 -->
+    <div class="result" id="result"></div>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // 显示加载动画
+            document.getElementById('loading').style.display = 'block';
+
+            // 获取表单数据
+            let formData = new FormData(this);
+            let model = document.getElementById('model-select').value;  // 获取用户选择的模型
+            formData.append('model', model);  // 将模型添加到表单数据中
+
+            try {
+                // 发送请求到后端
+                let response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // 解析响应数据
+                let data = await response.json();
+                
+                // 隐藏加载动画
+                document.getElementById('loading').style.display = 'none';
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // 根据所选择的模型动态修改标题
+                let modelTitle;
+                switch (model) {
+                    case 'turbo':
+                        modelTitle = 'Results of turbo';
+                        break;
+                    case 'large-v2':
+                        modelTitle = 'Results of large-v2';
+                        break;
+                    case 'large-v3':
+                        modelTitle = 'Results of large-v3';
+                        break;
+                    default:
+                        modelTitle = 'Results';
+                }
+
+                // 显示分析结果
+                let resultHTML = `
+                    <h2>${modelTitle}</h2>
+                    <p><strong>Proportion of L1 (Japanese) usage: </strong> ${data.japanese_ratio.toFixed(2)}%　　　　　<strong>Proportion of L2 (Chinese) usage: </strong> ${data.chinese_ratio.toFixed(2)}%</p>
+                    <div class="pie-chart">
+                        <img src="data:image/png;base64,${data.pie_chart}" alt="Language Usage Pie Chart">
+                    </div>
+                    <p><strong>Results of voice-to-text:</strong><br> ${data.full_speech_to_text.replace(/\n/g, '<br>')} </p>
+                    <p> ${data.speech_to_text}</p>
+                    <br>
+                    <p><strong>L1 (Japanese) :</strong><br> ${data.full_japanese_text}</p>
+                    <p><strong>L2 (Chinese) :</strong><br> ${data.full_chinese_text}</p>
+                `;
+                document.getElementById('result').innerHTML = resultHTML;
+
+            } catch (error) {
+                // 错误处理
+                document.getElementById('loading').style.display = 'none';
+                alert('An error occurred while processing the request: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
