@@ -101,7 +101,7 @@ def calculate_language_ratios(text):
 def plot_language_ratios(chinese_ratio, japanese_ratio):
     # 创建一个画布
     plt.figure(figsize=(6, 6), dpi=100)
-    plt.rc('font',family='Times New Roman',size=16)#SimHei
+    plt.rc('font',family='Times New Roman',size=15)#SimHei
     # 绘制饼图
     labels = ['Chinese', 'Japanese']
     sizes = [chinese_ratio, japanese_ratio]
@@ -110,14 +110,17 @@ def plot_language_ratios(chinese_ratio, japanese_ratio):
 
     plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%.2f%%', shadow=True, startangle=140,
             textprops={'fontweight': 'bold'})  # 设置标签字体加粗 
-    plt.title("Proportion of L1 and L2 usage\n\n\n",fontweight='bold',fontsize=20)
+    plt.title("Proportion of L1 and L2 usage\n",fontweight='bold',fontsize=20)
     plt.axis('equal')
+    # 调整布局，避免标题和图形被裁剪
+    plt.tight_layout()
 
     # 保存图表为图片
     img = BytesIO()
     plt.savefig(img, format='png')
     img.seek(0)
     img_base64 = base64.b64encode(img.read()).decode('utf-8')
+    plt.close()  # 关闭当前图表，释放内存
     return img_base64
 
 # 首页路由
@@ -173,5 +176,5 @@ def upload_file():
     })
 
 if __name__ == "__main__":
-    # 使用环境变量 PORT 来指定绑定的端口
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    # 启动应用
+    app.run(debug=True, host='0.0.0.0', port=8090)
