@@ -9,15 +9,38 @@
             font-family: Arial, sans-serif;
             padding: 20px;
             margin-left: 100px;  /* 设置左边距，整个页面右移 */
-            margin-right: 300px; /* 设置右边距，保留右边的空白区域 */
+            margin-right: 200px; /* 设置右边距，保留右边的空白区域 */
         }
         .result {
             margin-top: 20px;
         }
+        /* .pie-chart img {
+            width: 500px;
+            height: 500px;
+        } */
+
+        /* 使用 flexbox 实现左右布局 */
+        .result-container {
+            display: flex;
+            align-items: center;  /* 垂直居中对齐 */
+            justify-content: space-between;  /* 水平两端对齐 */
+            gap: 20px; /* 控制元素之间的间距 */
+        }
+
         .pie-chart img {
             width: 400px;
             height: 400px;
         }
+
+        .ratios {
+            flex: 1;  /* 使比例文本占据剩余空间 */
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+
+
+
 
         /* 加载动画样式 */
         .loading-spinner {
@@ -100,13 +123,13 @@
                 let modelTitle;
                 switch (model) {
                     case 'turbo':
-                        modelTitle = 'Results of turbo';
+                        modelTitle = '<br>Results of turbo';
                         break;
                     case 'large-v2':
-                        modelTitle = 'Results of large-v2';
+                        modelTitle = '<br>Results of large-v2';
                         break;
                     case 'large-v3':
-                        modelTitle = 'Results of large-v3';
+                        modelTitle = '<br>Results of large-v3';
                         break;
                     default:
                         modelTitle = 'Results';
@@ -115,12 +138,23 @@
                 // 显示分析结果
                 let resultHTML = `
                     <h2>${modelTitle}</h2>
-                    <p><strong>Proportion of L1 (Japanese) usage: </strong> ${data.japanese_ratio.toFixed(2)}%　　　　　<strong>Proportion of L2 (Chinese) usage: </strong> ${data.chinese_ratio.toFixed(2)}%</p>
-                    <div class="pie-chart">
-                        <img src="data:image/png;base64,${data.pie_chart}" alt="Language Usage Pie Chart">
+
+                    <div class="result-container">
+                        <!-- 比例显示 -->
+                        <div class="ratios">
+                            <p><strong>Proportion of L1 and L2 language:</strong><br>
+                            Proportion of L1 (Japanese) usage: <strong> ${data.japanese_ratio.toFixed(2)}%</strong><br> 
+                            Proportion of L2 (Chinese) usage: <strong> ${data.chinese_ratio.toFixed(2)}%</strong></p>
+                            <p><strong>Voice-to-text:</strong><br> ${data.full_speech_to_text.replace(/\n/g, '<br>')} </p>
+                        </div>
+                        
+                        <!-- 饼图 -->
+                        <div class="pie-chart">
+                            <img src="data:image/png;base64,${data.pie_chart}" alt="Language Usage Pie Chart">
+                        </div>
                     </div>
-                    <p><strong>Results of voice-to-text:</strong><br> ${data.full_speech_to_text.replace(/\n/g, '<br>')} </p>
-                    <p> ${data.speech_to_text}</p>
+
+                    <p><strong>Full text:</strong><br> ${data.speech_to_text}</p>
                     <br>
                     <p><strong>L1 (Japanese) :</strong><br> ${data.full_japanese_text}</p>
                     <p><strong>L2 (Chinese) :</strong><br> ${data.full_chinese_text}</p>
