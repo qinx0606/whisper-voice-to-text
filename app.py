@@ -20,21 +20,21 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 models = {}
 
 # 加载 Whisper 模型（只加载一次）
-def load_models():
-    global models
-    models = {
-        "turbo": whisper.load_model("turbo"),
-        "large-v2": whisper.load_model("large-v2"),
-        "large-v3": whisper.load_model("large-v3"),
-    }
-
 # def load_models():
 #     global models
 #     models = {
-#         "base": whisper.load_model("base"),
-#         "tiny": whisper.load_model("tiny"),
-#         "small": whisper.load_model("small"),
+#         "turbo": whisper.load_model("turbo"),
+#         "large-v2": whisper.load_model("large-v2"),
+#         "large-v3": whisper.load_model("large-v3"),
 #     }
+
+def load_models():
+    global models
+    models = {
+        "base": whisper.load_model("base"),
+        "tiny": whisper.load_model("tiny"),
+        "small": whisper.load_model("small"),
+    }
 
 
 # 调用模型加载函数
