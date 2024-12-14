@@ -1,4 +1,5 @@
 Flask
+torch==2.5.1+cpu
 openai-whisper
 matplotlib
 numpy
