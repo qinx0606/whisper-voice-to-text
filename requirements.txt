@@ -1,4 +1,4 @@
 Flask
-whisper
+openai-whisper
 matplotlib
 numpy
