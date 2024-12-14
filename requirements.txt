@@ -128,7 +128,6 @@ parso==0.8.4
 patsy==0.5.6
 pexpect==4.9.0
 pillow==11.0.0
-pkuseg==0.0.25
 platformdirs==4.3.6
 plotnine==0.13.6
 prince==0.13.1
